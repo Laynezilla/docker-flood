@@ -1,5 +1,3 @@
-# /flood/config.js
-
 const CONFIG = {
 	baseURI: '/',
 	dbCleanInterval: 1000 * 60 * 60,
@@ -9,8 +7,6 @@ const CONFIG = {
 	pollInterval: 1000 * 5,
 	secret: process.env.FLOOD_SECRET || 'wmtsflumfyegcclx',
 	scgi: {
-		#host: 'rtorrent',
-		#port: process.env.RTORRENT_PORT || 60283,
 		socket: true,
 		socketPath: '/data/rtorrent.sock'
 	}
