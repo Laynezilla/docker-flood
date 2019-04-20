@@ -1,43 +1,35 @@
-ARG NODE_IMAGE=node:10.1-alpine
-ARG WORKDIR=/usr/src/app/
+FROM node:10.13-alpine
 
-FROM ${NODE_IMAGE} as nodebuild
-ARG WORKDIR
+ENV PUID 1001
+ENV PGID 1001
+ENV PUSER flood
+ENV PGROUP data
+ENV FLOOD_DIR /flood/
+ENV FLOOD_SECRET wmtsflumfyegcclx
 
-WORKDIR $WORKDIR
+RUN apk add --no-cache --virtual=build-dependencies git python build-base && \
+	apk add --no-cache --upgrade curl mediainfo nano tar wget shadow su-exec && \
+	rm -rf /root/.cache /tmp/* && \
+	addgroup -g $PGID $PGROUP && \
+	adduser -D -G $PGROUP -u $PUID $PUSER && \
+	git clone https://github.com/jfurrow/flood.git
 
-# Generate node_modules
-COPY package.json ./package.json
-COPY package-lock.json ./package-lock.json
-RUN apk add --no-cache --virtual=build-dependencies \
-	python \
-	build-base && \
-	npm install && \
-	apk del --purge build-dependencies
+WORKDIR $FLOOD_DIR
 
-# Build static assets and remove devDependencies.
-COPY client ./client
-COPY shared ./shared
-COPY config.docker.js ./config.js
-RUN npm run build && \
-    npm prune --production
-COPY server ./server
+RUN npm install && \
+	npm cache clean --force
 
-# Now get the clean image without any dependencies and copy compiled app
-FROM ${NODE_IMAGE} as flood
-ARG WORKDIR
+COPY root /
 
-WORKDIR $WORKDIR
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
+	npm run build && \
+	npm prune --production && \
+	apk del --purge build-dependencies	
 
-# Install runtime dependencies.
-RUN apk --no-cache add \
-	mediainfo
+VOLUME /data
 
-COPY --from=nodebuild $WORKDIR $WORKDIR
-
-# Hints for consumers of the container.
 EXPOSE 3000
-VOLUME ["/data"]
 
-# Start application.
-CMD [ "npm", "start" ]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+CMD ["npm", "start"]
