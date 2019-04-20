@@ -9,10 +9,11 @@ const CONFIG = {
 	pollInterval: 1000 * 5,
 	secret: process.env.FLOOD_SECRET || 'wmtsflumfyegcclx',
 	scgi: {
-		host: 'rtorrent',
-		port: 60283,
+		#host: 'rtorrent',
+		#port: process.env.RTORRENT_PORT || 60283,
 		socket: true,
 		socketPath: '/data/rtorrent.sock'
 	}
 };
+
 module.exports = CONFIG;
