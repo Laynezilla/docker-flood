@@ -3,8 +3,6 @@
 
 set -e
 
-umask 0002
-
 if [ ! $(id -u $PUSER) == $PUID ]; then
 	usermod -u $PUID $PUSER
 fi
