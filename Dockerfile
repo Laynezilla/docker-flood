@@ -26,8 +26,6 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
 	npm prune --production && \
 	apk del --purge build-dependencies	
 
-VOLUME /data
-
 EXPOSE 3000
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
