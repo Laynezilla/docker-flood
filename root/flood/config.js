@@ -1,4 +1,4 @@
-# /data/config.js
+# /flood/config.js
 
 const CONFIG = {
 	baseURI: '/',
