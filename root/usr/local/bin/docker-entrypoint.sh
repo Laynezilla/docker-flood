@@ -11,6 +11,7 @@ if [ ! $(id -g $PUSER) == $PGID ]; then
 	groupmod -g $PGID $PGROUP
 fi
 
-chown -R $PUSER:$PGROUP "$FLOOD_DIR" /data/
+chown -R $PUSER:$PGROUP "$FLOOD_DIR"
+chown $PUSER:$PGROUP /config/
 
 exec su-exec $PUSER:$PGROUP "$@"
